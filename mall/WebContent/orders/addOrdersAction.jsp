@@ -34,7 +34,7 @@
 	// vo에 주문 갯수를 저장
 	orders.setOrdersAmount(ordersAmount);
 	// vo에 주문 가격을 저장
-	orders.setOrdersPrice(productPrice);
+	orders.setOrdersPrice(productPrice*ordersAmount);
 	// vo에 회원 이메일을 저장
 	orders.setMemberEmail(memberEmail);
 	// vo에 주문 배송지를 저장

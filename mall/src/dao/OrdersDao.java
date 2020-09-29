@@ -18,7 +18,7 @@ public class OrdersDao {
 		// 쿼리 실행
 		ResultSet rs = stmt.executeQuery();
 		System.out.println(stmt + "<- 쿼리 실행");
-		if(rs.next()) {
+		while(rs.next()) {
 			Orders orders = new Orders();
 			orders.setOrdersId(rs.getInt("orders_id"));
 			orders.setProductId(rs.getInt("product_id"));

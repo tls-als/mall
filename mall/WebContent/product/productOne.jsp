@@ -13,8 +13,22 @@
 </head>
 <body>
 <%
-	int productId = Integer.parseInt(request.getParameter("productId"));
+	// 제품 넘버 받는 변수
+	int productId = 0;
+	if(request.getParameter("productId") != null) {
+		productId = Integer.parseInt(request.getParameter("productId"));
+	}
+	
+	// 카테고리 넘버 받는 변수
+	int categoryId = 0;
+	if(request.getParameter("categoryId") != null) {
+		categoryId = Integer.parseInt(request.getParameter("categoryId"));
+	}
+	
+	System.out.println(categoryId + "<-- 상품내역 카테고리 넘버");
+	// dao 객체 생성
 	ProductDao productDao = new ProductDao();
+	// 하나의 상품 내역을 조회하기 위한 쿼리 결과 가져오기
 	Product product = productDao.selectProductOne(productId);
 %>
 <div class="container">
@@ -43,6 +57,18 @@
 			</tr>
 		</table>
 		<div class="d-flex justify-content-end">
+		<%
+			if(categoryId != 0) {
+		%>
+				<a href="<%=request.getContextPath()%>/product/ProductByCategory.jsp?categoryId=<%=categoryId%>" class="btn btn-secondary">돌아가기</a>&nbsp;
+		<%
+			}else {
+		%>
+				<a href="<%=request.getContextPath()%>/product/allProduct.jsp" class="btn btn-secondary">돌아가기</a>&nbsp;
+		<%
+			}
+		%>
+			
 			<button type="submit" class="btn btn-success">주문하기</button>
 		</div>
 	</form>
@@ -54,7 +80,7 @@
 		</tr>
 		<tr>
 			<td>product_pic</td>
-			<td><img src="<%=request.getContextPath()%>/images/<%=product.getProductPic()%>"></td>
+			<td><img src="/mall-admin/image/<%=product.getProductPic()%>"></td>
 		</tr>
 		<tr>
 			<td>product_name</td>

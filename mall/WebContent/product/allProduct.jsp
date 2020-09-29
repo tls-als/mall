@@ -111,9 +111,9 @@
 				for(Product p : list) {
 			%>
 					<tr>
-						<td><a href="" class="btn btn-info"><%=p.getProductId()%></a></td>
+						<td><a href="<%=request.getContextPath()%>/product/productOne.jsp?productId=<%=p.getProductId()%>" class="btn btn-info"><%=p.getProductId()%></a></td>
 						<td><%=p.getProductName()%></td>
-						<td><img src="<%=request.getContextPath()%>/images/<%=p.getProductPic()%>" width="180px" height="150px"></td>
+						<td><img src="/mall-admin/image/<%=p.getProductPic()%>" width="180px" height="150px"></td>
 						<td><%=p.getProductPrice()%></td>
 						<td><%=p.getProductContent()%></td>
 						<td><%=p.getProductSoldout()%></td>

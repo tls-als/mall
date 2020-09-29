@@ -46,7 +46,7 @@ public class ProductDao {
 		DBUtil dbutil = new DBUtil();
 		Connection conn = dbutil.getConnection();
 		// 전체 카테고리의 모든 상품을 조회하기 위한 쿼리
-		String sql = "select product_id, product_name,product_price, product_content, product_soldout, product_pic from product where category_id = ? order by product_id asc limit ?, ?";
+		String sql = "select product_id,category_id,product_name,product_price, product_content, product_soldout, product_pic from product where category_id = ? order by product_id asc limit ?, ?";
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setInt(1, categoryId);
 		stmt.setInt(2, (paging.getCurrentPage()-1)*paging.getRowPerPage());
@@ -59,6 +59,7 @@ public class ProductDao {
 		while(rs.next()) {
 			Product product = new Product();
 			product.setProductId(rs.getInt("product_id"));
+			product.setCategoryId(rs.getInt("category_id"));
 			product.setProductName(rs.getString("product_name"));
 			product.setProductPrice(rs.getInt("product_price"));
 			product.setProductContent(rs.getString("product_content"));
@@ -78,7 +79,7 @@ public class ProductDao {
 		DBUtil dbutil = new DBUtil();
 		Connection conn = dbutil.getConnection();
 		// 전체 카테고리의 모든 상품을 조회하기 위한 쿼리
-		String sql = "select product_id, product_name,product_price, product_content, product_soldout, product_pic from product order by product_id asc limit ?, ?";
+		String sql = "select product_id,product_name,product_price, product_content, product_soldout, product_pic from product order by product_id asc limit ?, ?";
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setInt(1, (paging.getCurrentPage()-1)*paging.getRowPerPage());
 		System.out.println((paging.getCurrentPage()-1)*paging.getRowPerPage() + "<-- 시작 페이지11");
@@ -121,7 +122,7 @@ public class ProductDao {
 		return product;
 	}
 	
-	//상품 리스트 출력(추천별 6개 출력)
+	// 카테고리 별 상품 리스트 출력(추천별 6개 출력)
 	public ArrayList<Product> selectProductList() throws Exception{
 		ArrayList<Product> list = new ArrayList<Product>();
 		DBUtil dbutil = new DBUtil();
@@ -129,6 +130,30 @@ public class ProductDao {
 		String sql = "select product_id,product_pic,product_name,product_price from product limit 0,6";
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		ResultSet rs = stmt.executeQuery();
+		System.out.println(rs + "<-쿼리 실행문");
+		while(rs.next()) {
+			Product p = new Product();
+			p.setProductId(rs.getInt("product_id"));
+			p.setProductPic(rs.getString("product_pic"));
+			p.setProductName(rs.getString("product_name"));
+			p.setProductPrice(rs.getInt("product_price"));
+			list.add(p);
+		}
+		conn.close();
+		return list;
+	}
+		
+	// 카테고리 별 상품 리스트 출력(추천별 6개 출력)
+	public ArrayList<Product> selectProductListByCategoryId(int categoryId) throws Exception{
+		ArrayList<Product> list = new ArrayList<Product>();
+		DBUtil dbutil = new DBUtil();
+		Connection conn = dbutil.getConnection();
+		String sql = "select product_id,product_pic,product_name,product_price from product where category_id = ? limit 0,6";
+		PreparedStatement stmt = conn.prepareStatement(sql);
+		stmt.setInt(1, categoryId);
+		ResultSet rs = stmt.executeQuery();
+		System.out.println(categoryId + "<-쿼리에서 카테고리 넘버");
+		System.out.println(rs + "<-쿼리 실행문");
 		while(rs.next()) {
 			Product p = new Product();
 //			p.productId = rs.getInt("product_id");

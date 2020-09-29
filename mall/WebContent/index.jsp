@@ -6,24 +6,34 @@
 <html>
 <head>
 <meta charset="UTF-8"> 
-<title>Insert title here</title>
+<title>Index.jsp</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 </head>
-<!-- mall에서 할 것.
-	1. 전체 카테고리 버튼 클릭 -> 모든 카테고리 항목의 제품을 List로 출력
-	2. 각 항목 카테고리 버튼 클릭 -> 해당 카테고리 포함된 제품만 List로 출력 
-	3. 추천 카테고리 4개 클릭시 -> 해당 카테고리 포함된 제품 List 출력
-	4. 추천 상품 버튼 클릭시 -> 해당 카테고리 별 추천 상품 카드형태로 출력
-	5. 각 List 별로 페이징 기능 구현해보기.
-	6. 아이콘 클릭시 내 주문 확인
-	7. 구디 클릭시 홈페이지 이동
-	mall-admin에서 할 것.
-	1. 회원 관리 페이지(조회기능,탈퇴기능 단,PW는 노출 안 할 것)
-	2. 페이징마저 하기
+<!-- 
+	*mall 프로젝트 진행 중 아쉬웠던 점
+	1. 데이터베이스의 결과 값을 가져오기 위해 Dao 클래스를 만들어 이용해 보았고 데이터를 담는 클래스가 vo.
+	      메서드에 대한 이해도가 아직 부족한 것 같음 
+	      -> 메서드의 파라메터 값은 두 가지 이상도 보낼 수 있다. ex) 값을 가진 변수, 페이징을 위한 vo객체도 한 메서드 안에서 같이 보낼 수 있다
+	      -> 메서드의 리턴값과 매개변수에 대한 이해도
+	2. 주석과 디버깅에 대한 습관이 많이 부족하다. -> 디버깅을 중간마다 체크하면서 코딩을 진행해야 오류를 쉽게 찾을 수 있을텐데 디버깅을 안 하고 진행하다 보니 오류를
+	      찾는데에 다소 시간이 많이 소요됨을 느낌
+	3. 아직 페이징 숫자를 구현하지 못한 아쉬움 -> 현재 페이지에서 해당 범위까지 이동할 수 있는 번호가 있는 페이징을 구현해보고 싶었으나 아직까지 방법을 찾고 있음
+	4. 코딩은 순차적으로 진행됨. -> 코드의 순서에 따라 값을 받을 수도 못받을 수도 있으니 주의.(생각하면서 코딩!)
+	5. 파일 업로드 다시 복습하기
+	6. 상품 리스트 페이지 상세보기에서 뒤로갔을 때 해당 페이지로 다시 돌아가는 구현이 아쉬움.
  -->
 <%
+	//인코딩 설정
 	request.setCharacterEncoding("utf-8");
+
+	//카테고리 아이디 받기
+	int categoryId = -1;
+	if(request.getParameter("categoryId") != null) {
+		categoryId = Integer.parseInt(request.getParameter("categoryId"));
+	}
+	
+	//dao 객체 생성
 	CategoryDao categoryDao = new CategoryDao();
 	//카테고리 전체 리스트 이름 목록
 	ArrayList<Category> categoryList1 = categoryDao.selectCategoryList();
@@ -113,7 +123,7 @@
 		  <div class="col-sm-9">
 
 		  	<!-- request.getContextPath() : 프로젝트명을 리턴한다 -->
-		  	<img src="<%=request.getContextPath()%>/images/b1.jpg">
+		  	<img src="<%=request.getContextPath()%>/images/main.jpg" width="700px" height="400px">
 		  </div>
 		</div>
 	</div>
@@ -150,20 +160,25 @@
 			</tr>
 		</table>	
 		<div align="center" style="margin-top: 20px;">
-			<a href="" class="btn btn-secondary" style="margin-right: 20px;">전체</a>
+			<a href="<%=request.getContextPath()%>/index.jsp?categoryId=-1" class="btn btn-secondary" style="margin-right: 20px;">전체</a>
 			<%
 		  		for(Category c : categoryList1) {
 		  	%>
-		  			<a href="" class="btn btn-secondary" style="margin-right: 20px;"><%=c.getCategoryName()%></a>
+		  			<a href="<%=request.getContextPath()%>/index.jsp?categoryId=<%=c.getCategoryId()%>" class="btn btn-secondary" style="margin-right: 20px;"><%=c.getCategoryName()%></a>
 		  	<%
 		  		}
 		  	%>
-		  	<a href="" class="btn btn-info" style="margin-right: 20px;">더보기</a>
+		  	<a href="<%=request.getContextPath()%>/product/allProduct.jsp" class="btn btn-info" style="margin-right: 20px;">더보기</a>
 		</div>
 	</div>
 	<%
+		//상품리스트 가져오는 객체 생성
 		ProductDao productDao = new ProductDao();
-		ArrayList<Product> productList = productDao.selectProductList();
+		//전체 상품 리스트
+		ArrayList<Product> productList1 = productDao.selectProductList();
+		//카테고리별 상품리스트
+		ArrayList<Product> productList2 = productDao.selectProductListByCategoryId(categoryId);
+		
 	%>
 	<!-- 상품 목록 6개 목록 보이기-->
 	<div align="center" style="margin-top: 20px;">
@@ -171,8 +186,35 @@
 			<tr>
 				<%
 					int i = 0;
-					for(Product p : productList) {
-						i=i+1;
+					System.out.println(categoryId + "받을 카테고리 아이디");
+					if(categoryId == -1) {
+						for(Product p : productList1) {
+							i=i+1;
+				%>
+				<td>	
+					<div class="card" style="width: 250px;margin-right: 20px;margin-bottom: 20px;">
+					  <img class="card-img-top" src="/mall-admin/image/<%=p.getProductPic()%>">
+					  <div class="card-body">
+					    <h4 class="card-title">
+					    	<a href="<%=request.getContextPath()%>/product/productOne.jsp?productId=<%=p.getProductId()%>">
+					    		<%=p.getProductName()%>
+					    	</a>
+					    </h4>
+					    <p class="card-text"><%=p.getProductPrice() %></p>
+					  </div>
+					</div>
+				</td>
+				<%
+							if(i%3==0) {
+				%>			
+							</tr><tr>		
+				<%
+							}
+						}
+					}
+					else {
+						for(Product p : productList2) {
+							i=i+1;
 				%>
 				<td>	
 					<div class="card" style="width: 250px;margin-right: 20px;margin-bottom: 20px;">
@@ -188,11 +230,12 @@
 					</div>
 				</td>
 				<%
-						if(i%3==0) {
+							if(i%3==0) {
 				%>			
 							</tr><tr>		
 				<%
-						}
+							}
+						}						
 					}
 				%>
 			</tr>
@@ -205,11 +248,13 @@
 		ArrayList<Notice> list = noticeDao.selectNoticeList();
 	%>	
 	<div>
+		<div align="left" style="margin-top: 50px;"><h4>최근 공지사항</h4></div>
 		<table class="table">
 			<thead>
 				<tr>
 					<td>notice_id</td>
 					<td>notice_title</td>
+					<td>상세보기</td>
 				</tr>
 			</thead>
 			<tbody>
@@ -218,11 +263,8 @@
 				%>
 						<tr>
 							<td><%=n.getNoticeId()%></td>
-							<td>
-								<a href="<%=request.getContextPath()%>/notice/noticeOne.jsp">
-									<%=n.getNoticeTitle()%>	
-								</a>
-							</td>				
+							<td><%=n.getNoticeTitle()%></td>
+							<td><a class="btn btn-info" href="<%=request.getContextPath()%>/notice/noticeOne.jsp?noticeId=<%=n.getNoticeId()%>">상세보기</a></td>			
 						</tr>
 				<%
 					}
