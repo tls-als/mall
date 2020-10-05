@@ -218,7 +218,7 @@
 				%>
 				<td>	
 					<div class="card" style="width: 250px;margin-right: 20px;margin-bottom: 20px;">
-					  <img class="card-img-top" src="<%=request.getContextPath()%>/images/<%=p.getProductPic()%>">
+					  <img class="card-img-top" src="/mall-admin/image/<%=p.getProductPic()%>">
 					  <div class="card-body">
 					    <h4 class="card-title">
 					    	<a href="<%=request.getContextPath()%>/product/productOne.jsp?productId=<%=p.getProductId()%>">
