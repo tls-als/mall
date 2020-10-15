@@ -10,6 +10,18 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <!-- 부트스트랩의 아이콘을 이용하기 위한 링크 -->
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+	$(document).ready(function(){
+		$("#btn").click(function(){
+			if($("#ordersAddr").val() == "") {
+				alert("배송지를 입력하세요!");
+				return;
+			}
+			$("#oneForm").submit();
+		});
+	});
+</script>
 </head>
 <body>
 <%
@@ -33,7 +45,7 @@
 %>
 <div class="container">
 	<h1>상품 상세보기</h1>
-	<form method="post" action="<%=request.getContextPath()%>/orders/addOrdersAction.jsp">
+	<form method="post" action="<%=request.getContextPath()%>/orders/addOrdersAction.jsp" id="oneForm">
 		<input type="hidden" value="<%=product.getProductId()%>" name="productId">
 		<input type="hidden" value="<%=product.getProductPrice()%>" name="productPrice">
 		<table class="table table-bordered">
@@ -53,15 +65,17 @@
 			</tr>
 			<tr>
 				<td>배송주소</td>
-				<td><input type="text" name="ordersAddr" class="form-control"></td>
+				<td><input type="text" name="ordersAddr" class="form-control" id="ordersAddr"></td>
 			</tr>
 		</table>
 		<div class="d-flex justify-content-end">
 		<%
+			// 카테고리 번호 값이 있으면 해당 카테고리 목록 화면으로 이동하기
 			if(categoryId != 0) {
 		%>
 				<a href="<%=request.getContextPath()%>/product/ProductByCategory.jsp?categoryId=<%=categoryId%>" class="btn btn-secondary">돌아가기</a>&nbsp;
 		<%
+			// 카테고리 번호 값이 없으면 전체 제품 목록 화면으로 이동하기
 			}else {
 		%>
 				<a href="<%=request.getContextPath()%>/product/allProduct.jsp" class="btn btn-secondary">돌아가기</a>&nbsp;
@@ -69,7 +83,7 @@
 			}
 		%>
 			
-			<button type="submit" class="btn btn-success">주문하기</button>
+			<button type="button" id="btn" class="btn btn-success">주문하기</button>
 		</div>
 	</form>
 	<br><br>
