@@ -3,8 +3,6 @@ import commons.DBUtil;
 import vo.*;
 import java.sql.*;
 
-import com.sun.corba.se.spi.orbutil.fsm.Guard.Result;
-
 public class MemberDao {
 	// 비밀번호 수정을 위한 메서드
 	public void updateMemberPw(Member member) throws Exception {
@@ -18,32 +16,6 @@ public class MemberDao {
 		stmt.executeUpdate();
 		System.out.println(stmt + "<--비번 수정 쿼리");
 	}
-	
-	// 이메일에 따른 회원 정보 조회를 위한 메서드
-	public Member selectMemberInfo(String memberEmail) throws Exception {
-		// vo 객체 생성(데이터 담기, 리턴을 위해)
-		Member member = null;
-		// 데이터베이스 연결
-		DBUtil dbutil = new DBUtil();
-		Connection conn = dbutil.getConnection();
-		// 회원 정보 조회를 위한 쿼리
-		String sql = "select member_email, member_name, member_pw, member_date from member where member_email = ?";
-		PreparedStatement stmt = conn.prepareStatement(sql);
-		stmt.setString(1, memberEmail);
-		// 쿼리문 실행
-		ResultSet rs = stmt.executeQuery();
-		System.out.println(rs + "<--쿼리실행");
-		if(rs.next()) {
-			member = new Member();
-			member.setMemberEmail(rs.getString("member_email"));
-			member.setMemberName(rs.getString("member_name"));
-			member.setMemberPassword(rs.getString("member_pw"));
-			member.setMemberDate(rs.getString("member_date"));
-		}
-		conn.close();
-		return member;
-	}
-	
 	//로그인을 위한 메서드. 리턴값이 있으면 즉,결과물이 나오면 로그인 성공
 	public String login(Member member) throws Exception {
 		// 결과값이 없으면 null을 리턴
@@ -75,7 +47,7 @@ public class MemberDao {
 		stmt.executeLargeUpdate();
 		conn.close();
 	}
-	
+	// 이메일 여부를 체크하는 메서드
 	public Member selectMemberEmailCk(String memberEmail) throws Exception{
 		Member member = null;
 		DBUtil dbutil = new DBUtil();
@@ -91,6 +63,24 @@ public class MemberDao {
 			member.setMemberEmail(rs.getString("id"));
 		}
 		System.out.println(member.getMemberEmail() + "<- 이메일 체크 결과값");
+		conn.close();
+		return member;
+	}
+	// 내 정보를 조회하는 메서드
+	public Member selectMyInfo(String memberEmail) throws Exception{
+		Member member = null;
+		DBUtil dbUtil = new DBUtil();
+		Connection conn = dbUtil.getConnection();
+		String sql = "select member_email, member_name, member_date from member WHERE member_email=?";
+		PreparedStatement stmt = conn.prepareStatement(sql);
+		stmt.setString(1, memberEmail);
+		ResultSet rs = stmt.executeQuery();
+		if(rs.next()) {
+			member = new Member();
+			member.setMemberEmail(rs.getString("member_email"));
+			member.setMemberName(rs.getString("member_name"));
+			member.setMemberDate(rs.getString("member_date"));
+		}
 		conn.close();
 		return member;
 	}

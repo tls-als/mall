@@ -1,10 +1,10 @@
 package vo;
 
 public class Member {
-	private String memberEmail;
-	private String memberPassword;
-	private String memberName;
-	private String memberDate;
+	private String memberEmail;		// 회원 메일
+	private String memberPassword;	// 회원 비밀번호
+	private String memberName;		// 회원 이름
+	private String memberDate;		// 가입일
 	// Member() {
 	//  memberEmail = null;
 	//	memberPassword = null;... 

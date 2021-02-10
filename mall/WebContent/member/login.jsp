@@ -7,21 +7,6 @@
 <meta charset="UTF-8">
 <title>login</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>
-	$(document).ready(function(){
-		$("#btn").click(function(){
-			if($("#memberEmail").val() == "") {
-				alert("이메일을 입력하세요!");
-				return;
-			}else if($("#memberPw").val() == "") {
-				alert("비밀번호를 입력하세요!");
-				return;
-			}
-			$("#loginForm").submit();
-		});
-	});
-</script>
 </head>
 <body>
 <%
@@ -34,20 +19,19 @@
 	<div class="jumbotron">
 		<h1>로그인</h1>
 	</div>
-	
-	<form method="post" action="<%=request.getContextPath()%>/member/loginAction.jsp" id="loginForm">
+	<form method="post" action="<%=request.getContextPath()%>/member/loginAction.jsp">
 	<table	class="table table-bordered">
 		<tr>
 			<td>이메일</td>
-			<td><input type="text" name="memberEmail" id="memberEmail" class="form-control" value="hong@gd.com"></td>
+			<td><input type="text" name="memberEmail" class="form-control" value="shin@naver.com"></td>
 		</tr>
 		<tr>
 			<td>비밀번호</td>
-			<td><input type="password" name="memberPw" id="memberPw" class="form-control" value="1234"></td>
+			<td><input type="password" name="memberPw" class="form-control" value="1234"></td>
 		</tr>
 	</table>
 	<div class="d-flex justify-content-end">
-		<button type="submit" id="btn" class="btn btn-success">로그인</button>&nbsp;
+		<button type="submit" class="btn btn-success">로그인</button>&nbsp;
 		<a href="<%=request.getContextPath()%>/index.jsp" class="btn btn-secondary">돌아가기</a>
 	</div>
 	</form>

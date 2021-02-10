@@ -6,14 +6,14 @@ package vo;
  * 
  */
 public class Orders {
-	private int ordersId;
-	private int productId;
-	private int ordersAmount;
-	private int ordersPrice;
-	private String memberEmail;
-	private String ordersAddr;
-	private String ordersState;
-	private String ordersDate;
+	private int ordersId;	// 주문 ID
+	private int productId;	// 제품 ID
+	private int ordersAmount;	// 주문수량
+	private int ordersPrice;	// 가격
+	private String memberEmail;	// 회원메일
+	private String ordersAddr;	// 주소
+	private String ordersState;	// 주문상태
+	private String ordersDate;	// 주문일
 	
 	//캡슐화
 	public int getOrdersId() {

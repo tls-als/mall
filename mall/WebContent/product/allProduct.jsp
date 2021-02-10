@@ -16,17 +16,25 @@
 	
 	// 페이징 데이터를 담는 Pasing 객체 생성
 	Paging paging = new Paging();
+	// 현재 페이지 담기
+	int currentPage = paging.getCurrentPage();
 	if(request.getParameter("currentPage") != null) {
-		//paging.currentPage = Integer.parseInt(request.getParameter("currentPage"));
-		paging.setCurrentPage(Integer.parseInt(request.getParameter("currentPage")));
+		currentPage = Integer.parseInt(request.getParameter("currentPage"));
+		paging.setCurrentPage(currentPage);
 	}
+	// 마지막 페이지를 담을 변수
+	int lastPage = 0;
+	lastPage = paging.getLastPage();
+	// 네이게이션 페이지 정보 담기
+	Map<String, Integer> map = paging.getNavPaging(currentPage, lastPage);
+	int navStartPage = map.get("navStartPage");
+	int navEndPage = map.get("navEndPage");
+	
 	// doa 객체 생성
 	ProductDao productDao = new ProductDao();
-	
 	// 리스트 객체 생성. 쿼리 결과 담기
 	ArrayList<Product> list = new ArrayList<Product>();
 	list = productDao.selectAllProductList(paging);
-	//System.out.println(list + "<-- 리스트");
 %>
 <div class="container">
 	<!-- 상단 타이틀, 검색창, 주문조회 및 장바구니 -->
@@ -46,12 +54,12 @@
 				</form>
 			</div>
 			<div class="col">
-				<span class="badge badge-pill badge-light">주문정보</span>
-				<a href="<%=request.getContextPath()%>/orders/myOrdersList.jsp">
+				<span class="badge badge-pill badge-light">마이페이지</span>
+				<a href="<%=request.getContextPath()%>/member/myPage.jsp">
 					<i class='fas fa-user-alt' style='font-size: 38px;margin-right: 10px;color: black'></i>
 				</a>
-				<span class="badge badge-pill badge-light">장바구니</span>
-				<a href="#">	
+				<span class="badge badge-pill badge-light">주문정보</span>
+				<a href="<%=request.getContextPath()%>/orders/myOrdersList.jsp">	
 					<i class='fas fa-shopping-cart' style='font-size:38px;color: black'></i>
 				</a>
 			</div>
@@ -77,11 +85,11 @@
 		  		}else {
 		   %>
 			<!-- 로그인 상태 -->
+				<li class="nav-item text-white" style="align-self: center;">
+					<strong><%=session.getAttribute("loginMemberEmail")%></strong>님&nbsp;
+			    </li>
 				<li class="nav-item">
-			      <a class="nav-link" href="<%=request.getContextPath()%>/member/logoutAction.jsp">로그아웃</a>
-			    </li>s
-			    <li class="nav-item">
-			      <a class="nav-link" href="#">회원정보</a>
+			      	<a class="nav-link" href="<%=request.getContextPath()%>/member/logoutAction.jsp">로그아웃</a>
 			    </li>
 			<%
 		  		}
@@ -113,7 +121,7 @@
 					<tr>
 						<td><a href="<%=request.getContextPath()%>/product/productOne.jsp?productId=<%=p.getProductId()%>" class="btn btn-info"><%=p.getProductId()%></a></td>
 						<td><%=p.getProductName()%></td>
-						<td><img src="/mall-admin/image/<%=p.getProductPic()%>" width="180px" height="150px"></td>
+						<td><img src="<%=request.getContextPath()%>/images/<%=p.getProductPic()%>" width="180px" height="150px"></td>
 						<td><%=p.getProductPrice()%></td>
 						<td><%=p.getProductContent()%></td>
 						<td><%=p.getProductSoldout()%></td>
@@ -127,49 +135,87 @@
 	<!-- 페이징 네비게이션 -->
 	<div align="center">
 		<%
-			// 마지막 페이지를 담을 변수
-			int lastPage = 0;
-			// 현재 페이지를 담는 변수
-			int currentPage = paging.getCurrentPage();
-			
-			lastPage = paging.getLastPage();
-			if(currentPage < 2 && lastPage != 1) {
+			if(lastPage == 1 || lastPage == 0) {
+		%>
+				<ul class="pagination pagination-sm pagination justify-content-center">
+					<li class="page-item disabled"><a class="page-link">처음으로</a></li>
+					<li class="page-item disabled"><a class="page-link">이전</a></li>
+					<li class="page-item active">
+						<span class="page-link">1</span>
+					</li>
+					<li class="page-item disabled"><a class="page-link" href="">다음</a></li>
+					<li class="page-item disabled"><a class="page-link" href="">마지막으로</a></li>
+				</ul>
+		<%
+			}
+			if(currentPage == 1 && lastPage != 1) {
 		%>	
 				<ul class="pagination pagination-sm pagination justify-content-center">
 					<li class="page-item disabled"><a class="page-link">처음으로</a></li>
 					<li class="page-item disabled"><a class="page-link">이전</a></li>
-					<li class="page-item">
-						<span class="page-link"><%=currentPage%></span>
-					</li>
+				<%
+					for(int i=navStartPage; i<=navEndPage; i++) {
+						if(currentPage == i) {
+				%>
+						<li class="page-item active"><a class="page-link"><%=i%></a></li>
+				<%		
+						}else {
+				%>
+						<li class="page-item"><a class="page-link" href="/mall/product/allProduct.jsp?currentPage=<%=i%>"><%=i%></a></li>
+				<%
+						}
+					}
+				%>
 					<li class="page-item"><a class="page-link" href="/mall/product/allProduct.jsp?currentPage=<%=currentPage+1%>">다음</a></li>
 					<li class="page-item"><a class="page-link" href="/mall/product/allProduct.jsp?currentPage=<%=lastPage%>">마지막으로</a></li>
 				</ul>
 		<%
 			}
-			if(currentPage > 1 && lastPage > currentPage) {
-		%>		<ul class="pagination pagination-sm pagination justify-content-center">
-					<li class="page-item"><a class="page-link" href="/mall/product/allProduct.jsp?currentPage=1" >처음으로</a></li>
-					<li class="page-item"><a class="page-link" href="/mall/product/allProduct.jsp?currentPage=<%=currentPage-1%>">이전</a></li>
-					<li class="page-item">
-						<span class="page-link"><%=currentPage%></span>
-					</li>						
-					<li class="page-item"><a class="page-link" href="/mall/product/allProduct.jsp?currentPage=<%=currentPage+1%>">다음</a></li>
-					<li class="page-item"><a class="page-link" href="/mall/product/allProduct.jsp?currentPage=<%=lastPage%>">마지막으로</a></li>
-				</ul>
-		<%
-			}
-			if(currentPage > 1 && currentPage == lastPage) {
-		%>
+			if(currentPage != 1 && currentPage != lastPage) {
+		%>	
 				<ul class="pagination pagination-sm pagination justify-content-center">
-					<li class="page-item"><a class="page-link" href="/mall/product/allProduct.jsp?currentPage=1" >처음으로</a></li>
+					<li class="page-item"><a class="page-link" href="/mall/product/allProduct.jsp?currentPage=1">처음으로</a></li>
 					<li class="page-item"><a class="page-link" href="/mall/product/allProduct.jsp?currentPage=<%=currentPage-1%>">이전</a></li>
-					<li class="page-item">
-						<span class="page-link"><%=currentPage%></span>
-					</li>
-					<li class="page-item disabled"><a class="page-link" href="/mall/product/allProduct.jsp?currentPage=<%=currentPage+1%>">다음</a></li>
-					<li class="page-item disabled"><a class="page-link" href="/mall/product/allProduct.jsp?currentPage=<%=lastPage%>">마지막으로</a></li>
-				</ul>		
-		<%
+				<%
+					for(int i=navStartPage; i<=navEndPage; i++) {
+						if(currentPage == i) {
+				%>
+						<li class="page-item active"><a class="page-link"><%=i%></a></li>
+				<%		
+						}else {
+				%>
+						<li class="page-item"><a class="page-link" href="/mall/product/allProduct.jsp?currentPage=<%=i%>"><%=i%></a></li>
+				<%
+						}
+					}
+				%>
+					<li class="page-item"><a class="page-link" href="/mall/product/allProduct.jsp?currentPage=<%=currentPage+1%>">다음</a></li>
+					<li class="page-item"><a class="page-link" href="/mall/product/allProduct.jsp?currentPage=<%=lastPage%>">마지막으로</a></li>
+				</ul>
+		<%	
+			}
+			if(currentPage == lastPage && lastPage != 1) {
+		%>	
+				<ul class="pagination pagination-sm pagination justify-content-center">
+					<li class="page-item"><a class="page-link" href="/mall/product/allProduct.jsp?currentPage=1">처음으로</a></li>
+					<li class="page-item"><a class="page-link" href="/mall/product/allProduct.jsp?currentPage=<%=currentPage-1%>">이전</a></li>
+				<%
+					for(int i=navStartPage; i<=navEndPage; i++) {
+						if(currentPage == i) {
+				%>
+						<li class="page-item active"><a class="page-link"><%=i%></a></li>
+				<%		
+						}else {
+				%>
+						<li class="page-item"><a class="page-link" href="/mall/product/allProduct.jsp?currentPage=<%=i%>"><%=i%></a></li>
+				<%
+						}
+					}
+				%>
+					<li class="page-item disabled"><a class="page-link">다음</a></li>
+					<li class="page-item disabled"><a class="page-link">마지막으로</a></li>
+				</ul>
+		<%	
 			}
 		%>
 	</div>

@@ -2,10 +2,10 @@ package vo;
 
 public class Notice {
 	//캡슐화
-	private int noticeId;
-	private String noticeTitle;
-	private String noticeContent;
-	private String noticeDate; //자바에 데이트와 마리아DB의 데이트 호환안됨
+	private int noticeId;		// 공지 ID
+	private String noticeTitle;	// 제목
+	private String noticeContent; // 내용
+	private String noticeDate; 	// 공지날짜(자바에 데이트와 마리아DB의 데이트 호환안됨)
 	public int getNoticeId() {
 		return noticeId;
 	}
@@ -30,5 +30,4 @@ public class Notice {
 	public void setNoticeDate(String noticeDate) {
 		this.noticeDate = noticeDate;
 	}
-	
 }

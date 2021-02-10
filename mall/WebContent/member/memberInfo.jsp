@@ -30,7 +30,7 @@
 
 	MemberDao memberDao = new MemberDao();
 	// 회원 정보 조회 결과 vo에 담기
-	Member member = memberDao.selectMemberInfo(memberEmail);
+	Member member = memberDao.selectMyInfo(memberEmail);
 	System.out.println(member + "<--dao 실행");
 %>
 <div class="container">
