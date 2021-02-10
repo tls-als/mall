@@ -28,5 +28,5 @@
 	MemberDao memberDao = new MemberDao();
 	memberDao.updateMemberPw(member);
 	
-	response.sendRedirect(request.getContextPath() + "/member/memberInfo.jsp?memberEmail=" + memberEmail);
+	response.sendRedirect(request.getContextPath() + "/member/myPage.jsp");
 %>

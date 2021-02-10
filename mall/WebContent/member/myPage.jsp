@@ -29,7 +29,7 @@
 	Member member = memberDao.selectMyInfo(memberEmail);
 %>
 <div class="container">
-<!-- 상단 타이틀, 검색창, 주문조회 및 장바구니 -->
+	<!-- 상단 타이틀, 검색창, 주문조회 및 장바구니 -->
 	<div style="margin-top:30px;" align="center">	
 		<div class="row">
 			<div class="col">
@@ -95,20 +95,31 @@
 	</div>
 	
 	<!-- 테이블 출력 -->
-	<table class="table">
-		<tr>
-			<th>이메일</th>
-			<td><%=member.getMemberEmail()%></td>
-		</tr>
-		<tr>
-			<th>이름</th>
-			<td><%=member.getMemberName()%></td>
-		</tr>
-		<tr>
-			<th>가입날짜</th>
-			<td><%=member.getMemberDate()%></td>
-		</tr>
-	</table>
+	<form method="post" action="<%=request.getContextPath()%>/member/updateMemberPw.jsp">
+		<table class="table">
+			<tr>
+				<th>이메일</th>
+				<td>
+					<input class="form-control" type="text" name="memberEmail" value="<%=member.getMemberEmail()%>" readonly="readonly">
+					<input type="hidden" name="memberPw" value="<%=member.getMemberPassword()%>">
+				</td>
+			</tr>
+			<tr>
+				<th>이름</th>
+				<td>
+					<input class="form-control" type="text" name="memberName" value="<%=member.getMemberName()%>" readonly="readonly">
+				</td>
+			</tr>
+			<tr>
+				<th>가입날짜</th>
+				<td><%=member.getMemberDate()%></td>
+			</tr>
+		</table>
+		<!-- 비빌번호 변경 페이지 이동 -->
+		<div class="d-flex justify-content-end">
+			<button type="submit" class="btn btn-info">비밀번호 변경</button>
+		</div>
+	</form>
 </div>
 </body>
 </html>
